@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Price Tracker - book prices from books.toscrape.com</title>
   <meta name="description" content="Prices of 1,000 books from books.toscrape.com, saved by a Python scraper in SQLite. Shows the previous price, the change and a price chart for every book.">
-  <meta name="theme-color" content="#ffd84d">
+  <meta name="theme-color" content="#ff9d4d">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Price Tracker">
   <meta property="og:description" content="Prices of 1,000 books, the change since the previous price and a price chart for every book.">
   <meta property="og:image" content="https://hassimx.github.io/price-tracker/img/preview.png">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23ffd84d'/%3E%3Cpath d='M6 8h14l7 8-7 8H6z' fill='%23151515'/%3E%3Ccircle cx='11' cy='16' r='2.2' fill='%23ffd84d'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23ff9d4d'/%3E%3Cpath d='M6 8h14l7 8-7 8H6z' fill='%230f2540'/%3E%3Ccircle cx='11' cy='16' r='2.2' fill='%23ff9d4d'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/bitter@5.3.0/700.css" integrity="sha384-UmsHPPY2eGXaZndoxfvKd3qJrhk6GvfbBQTC5StloyklKpSZ4f7YfqDIT03EdZRt" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/bitter@5.3.0/800.css" integrity="sha384-u+Qrt5WpRyJAo4AguV4HkvAfZW3+r4YS47RLIOdlVVPGE8x/LpPNtWfiLk4YIozF" crossorigin="anonymous">
@@ -25,7 +25,7 @@
   <header class="top">
     <div class="wrap">
       <a class="brand" href="./">
-        <svg class="logo" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 5h16l10 11-10 11H3z" fill="#151515"/><circle cx="9" cy="16" r="2.6" fill="#ffd84d"/></svg>
+        <svg class="logo" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 5h16l10 11-10 11H3z" fill="#0f2540" stroke="#0f2540" stroke-width="3" stroke-linejoin="round"/><circle cx="9" cy="16" r="2.6" fill="#ff9d4d"/></svg>
         Price Tracker
       </a>
       <a class="gh" href="https://github.com/hassimx/price-tracker">Code on GitHub</a>
@@ -93,7 +93,7 @@
         <button type="button" class="btn push-right" id="csv">Download CSV</button>
       </div>
 
-      <div class="table-wrap">
+      <div class="table-wrap box">
         <table class="books">
           <thead>
             <tr>

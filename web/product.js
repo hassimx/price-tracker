@@ -51,13 +51,13 @@
     `<aside>` +
     `<div class="price-tag">${PT.money(p.price)}</div>` +
     `<p class="price-line">${PT.chip(p)} ${previousLine}</p>` +
-    `<table class="facts"><tbody>` +
+    `<div class="box"><table class="facts"><tbody>` +
     `<tr><th>Price now</th><td>${PT.money(p.price)}</td></tr>` +
     `<tr><th>Before</th><td>${PT.money(p.old)}</td></tr>` +
     `<tr><th>Lowest</th><td>${PT.money(lowest)}</td></tr>` +
     `<tr><th>Highest</th><td>${PT.money(highest)}</td></tr>` +
     `<tr><th>Average</th><td>${PT.money(average)}</td></tr>` +
-    `</tbody></table>` +
+    `</tbody></table></div>` +
     `<nav class="neighbours" aria-label="Other books">${neighbour(prev, "Previous book")}${neighbour(next, "Next book")}</nav>` +
     `</aside>` +
     `<section>` +
