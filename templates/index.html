@@ -26,7 +26,7 @@
   <label class="sr-only" for="q">Search by title</label>
   <input id="q" class="search" type="search" name="q" value="{{ q }}" placeholder="Search by title">
   <label class="sr-only" for="show">Filter</label>
-  <select id="show" name="show">
+  <select id="show" name="show" onchange="this.form.submit()">
     <option value="all" {% if show == 'all' %}selected{% endif %}>All products</option>
     <option value="drops" {% if show == 'drops' %}selected{% endif %}>Price dropped</option>
     <option value="rises" {% if show == 'rises' %}selected{% endif %}>Price rose</option>
