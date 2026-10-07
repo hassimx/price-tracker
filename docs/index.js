@@ -124,8 +124,8 @@
     return list
       .map(
         (p) =>
-          `<li><a href="product.html?id=${p.id}"><span class="m-title">${PT.esc(p.title)}</span>` +
-          `<span class="m-price">${PT.money(p.old)} → ${PT.money(p.price)}</span>${PT.chip(p)}</a></li>`
+          `<li><a href="product.html?id=${p.id}"><span class="m-title">${PT.esc(p.title)}</span><span class="m-lead"></span>` +
+          `<span class="m-price">${PT.money(p.price)}</span>${PT.chip(p)}</a></li>`
       )
       .join("");
   }
@@ -158,8 +158,8 @@
       data: {
         labels: days.slice(1).map(PT.shortDate),
         datasets: [
-          { label: "Pricier", data: rises, backgroundColor: PT.cssVar("--up"), borderRadius: 2 },
-          { label: "Cheaper", data: drops, backgroundColor: PT.cssVar("--down"), borderRadius: 2 },
+          { label: "More expensive", data: rises, backgroundColor: PT.cssVar("--up") },
+          { label: "Cheaper", data: drops, backgroundColor: PT.cssVar("--down") },
         ],
       },
       options: {
@@ -171,7 +171,7 @@
           y: { stacked: true, grid: { color: PT.cssVar("--line") }, ticks: { callback: (value) => Math.abs(value) } },
         },
         plugins: {
-          legend: { position: "bottom", labels: { usePointStyle: true, boxWidth: 8 } },
+          legend: { position: "bottom", labels: { boxWidth: 12, boxHeight: 12 } },
           tooltip: { callbacks: { label: (item) => `${item.dataset.label}: ${Math.abs(item.parsed.y)} books` } },
         },
       },
@@ -186,15 +186,19 @@
     return;
   }
   products = data.products;
-  PT.setupChartDefaults();
+  await PT.setupChartDefaults();
 
   const drops = products.filter((p) => PT.trend(p) === "down").length;
   const rises = products.filter((p) => PT.trend(p) === "up").length;
-  $("#fig-total").textContent = products.length.toLocaleString("en-GB");
-  $("#fig-drops").textContent = drops.toLocaleString("en-GB");
-  $("#fig-rises").textContent = rises.toLocaleString("en-GB");
-  $("#fig-updated").textContent = data.updated ? PT.longDate(data.updated.slice(0, 10)) : "–";
-  $("#demo-badge").hidden = !data.demo;
+  const flat = products.length - drops - rises;
+  const total = products.length.toLocaleString("en-GB");
+  const updated = data.updated ? PT.longDate(data.updated.slice(0, 10)) : null;
+  $("#title").textContent = `Prices of ${total} books`;
+  $("#intro").innerHTML =
+    `A Python script copies the catalogue of books.toscrape.com and saves every price in SQLite. ` +
+    `Since the previous price, <strong>${drops}</strong> books got cheaper, <strong>${rises}</strong> got more expensive ` +
+    `and <strong>${flat}</strong> stayed the same.` +
+    (updated ? ` Last update: ${updated}.` : "");
   $("#demo-note").hidden = !data.demo;
 
   const changed = products.filter((p) => p.change != null);

@@ -68,8 +68,16 @@ const PT = (function () {
     );
   }
 
-  function setupChartDefaults() {
+  async function setupChartDefaults() {
+    // wait for the web fonts, otherwise the chart text is measured with the fallback font
+    try {
+      await document.fonts.load('15px "Atkinson Hyperlegible Next"');
+      await document.fonts.ready;
+    } catch (err) {
+      // the fallback font is fine
+    }
     Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+    Chart.defaults.font.size = 13;
     Chart.defaults.color = cssVar("--muted");
   }
 
