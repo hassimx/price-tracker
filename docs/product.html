@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book - Price Tracker</title>
+  <meta name="theme-color" content="#14203a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23c8923a'/%3E%3Cpolyline points='5,22 12,15 17,19 27,8' fill='none' stroke='%2314203a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="wrap bar">
+      <a class="brand" href="./">
+        <svg class="mark" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8"/><polyline points="5,22 12,15 17,19 27,8"/></svg>
+        Price Tracker
+      </a>
+      <nav>
+        <a href="./#books">All books</a>
+        <a href="https://github.com/hassimx/price-tracker">Source code</a>
+      </nav>
+    </div>
+
+    <section class="wrap hero hero-product" id="hero">
+      <a class="back" href="./#books">&larr; All books</a>
+      <h1 id="title">Loading…</h1>
+      <p class="source" id="source"></p>
+    </section>
+  </header>
+
+  <main class="wrap" id="content">
+    <noscript><p class="notice">This page needs JavaScript to show the prices.</p></noscript>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Prices come from <a href="https://books.toscrape.com">books.toscrape.com</a>, a practice site for scrapers. Built with Python, Flask, SQLite and Chart.js.</p>
+      <p id="demo-note" hidden>The price history on this page is generated demo data, not real price changes.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"
+          integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC"
+          crossorigin="anonymous"></script>
+  <script src="common.js"></script>
+  <script src="product.js"></script>
+</body>
+</html>
