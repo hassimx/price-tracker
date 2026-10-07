@@ -5,11 +5,8 @@ from datetime import datetime, timezone
 
 DB_PATH = os.environ.get("PRICE_DB", os.path.join(os.path.dirname(os.path.abspath(__file__)), "prices.db"))
 
-SORTS = {
-    "title": "title COLLATE NOCASE",
-    "price": "price",
-    "change": "change_pct",
-}
+# how many days of history go to the website
+DAYS_SHOWN = 90
 
 # latest price per product, plus the last price that was different from it
 PRODUCTS_SQL = """
@@ -70,7 +67,7 @@ def init_db():
 
 
 def save_product(conn, title, url, price, scraped_at):
-    # url is unique,so a second run only updates the title
+    # url is unique, so a second run only updates the title
     conn.execute(
         "INSERT INTO products (title, url, created_at) VALUES (?, ?, ?) "
         "ON CONFLICT(url) DO UPDATE SET title = excluded.title",
@@ -84,85 +81,45 @@ def save_product(conn, title, url, price, scraped_at):
     return row["id"]
 
 
-def build_filter(q, show):
-    where = []
-    params = []
-    if q:
-        where.append("title LIKE ?")
-        params.append("%" + q + "%")
-    if show == "drops":
-        where.append("change_pct < 0")
-    elif show == "rises":
-        where.append("change_pct > 0")
-    sql = " WHERE " + " AND ".join(where) if where else ""
-    return sql, params
-
-
-def count_products(q="", show="all"):
-    where, params = build_filter(q, show)
-    with connect() as conn:
-        return conn.execute(f"SELECT COUNT(*) FROM ({PRODUCTS_SQL}){where}", params).fetchone()[0]
-
-
-def list_products(q="", show="all", sort="title", direction="asc", limit=None, offset=0):
-    where, params = build_filter(q, show)
-    column = SORTS.get(sort, SORTS["title"])
-    direction = "DESC" if direction == "desc" else "ASC"
-    # -1 means no limit in sqlite
-    params = params + [-1 if limit is None else limit, offset]
-    with connect() as conn:
-        return conn.execute(
-            f"SELECT * FROM ({PRODUCTS_SQL}){where} "
-            f"ORDER BY {column} IS NULL, {column} {direction}, id LIMIT ? OFFSET ?",
-            params,
-        ).fetchall()
-
-
-def get_stats():
-    with connect() as conn:
-        row = conn.execute(f"""
-            SELECT COUNT(*) AS total,
-                   COALESCE(SUM(change_pct < 0), 0) AS drops,
-                   COALESCE(SUM(change_pct > 0), 0) AS rises
-            FROM ({PRODUCTS_SQL})
-        """).fetchone()
-        last = conn.execute("SELECT MAX(scraped_at) FROM price_history").fetchone()[0]
-    return {"total": row["total"], "drops": row["drops"], "rises": row["rises"], "last_update": last}
-
-
-def has_demo_data():
-    with connect() as conn:
-        return conn.execute("SELECT 1 FROM price_history WHERE source = 'demo' LIMIT 1").fetchone() is not None
-
-
-def get_product(product_id):
-    with connect() as conn:
-        product = conn.execute(f"SELECT * FROM ({PRODUCTS_SQL}) WHERE id = ?", (product_id,)).fetchone()
-        if product is None:
-            return None
-        extra = conn.execute(
-            "SELECT MIN(price) AS lowest, MAX(price) AS highest, COUNT(*) AS checks "
-            "FROM price_history WHERE product_id = ?",
-            (product_id,),
-        ).fetchone()
-    return dict(product, **dict(extra))
-
-
-def get_history(product_id):
-    with connect() as conn:
-        rows = conn.execute(
-            "SELECT price, scraped_at FROM price_history WHERE product_id = ? "
-            "ORDER BY scraped_at, id",
-            (product_id,),
-        ).fetchall()
-    # one point per day, the last price of that day wins
-    by_day = {}
-    for row in rows:
-        by_day[row["scraped_at"][:10]] = row["price"]
-    return [{"date": day, "price": price} for day, price in by_day.items()]
-
-
 def get_current_prices():
     with connect() as conn:
         rows = conn.execute(f"SELECT id, price FROM ({PRODUCTS_SQL}) ORDER BY id").fetchall()
     return [(row["id"], row["price"]) for row in rows]
+
+
+def export_data():
+    # everything the website needs, in one dict
+    with connect() as conn:
+        products = conn.execute(f"SELECT * FROM ({PRODUCTS_SQL}) ORDER BY title COLLATE NOCASE, id").fetchall()
+        history = conn.execute("SELECT product_id, price, scraped_at FROM price_history ORDER BY scraped_at, id").fetchall()
+        demo = conn.execute("SELECT 1 FROM price_history WHERE source = 'demo' LIMIT 1").fetchone() is not None
+        updated = conn.execute("SELECT MAX(scraped_at) FROM price_history").fetchone()[0]
+
+    # one price per product per day, the last one of the day wins
+    daily = {}
+    days = set()
+    for row in history:
+        day = row["scraped_at"][:10]
+        days.add(day)
+        daily.setdefault(row["product_id"], {})[day] = row["price"]
+    days = sorted(days)
+
+    items = []
+    for p in products:
+        prices = []
+        last = None
+        for day in days:
+            # a price stays the same until it changes
+            last = daily[p["id"]].get(day, last)
+            prices.append(last)
+        items.append({
+            "id": p["id"],
+            "title": p["title"],
+            "url": p["url"],
+            "price": p["price"],
+            "old": p["old_price"],
+            "change": None if p["change_pct"] is None else round(p["change_pct"], 2),
+            "prices": prices[-DAYS_SHOWN:],
+        })
+
+    return {"updated": updated, "demo": demo, "days": days[-DAYS_SHOWN:], "products": items}
