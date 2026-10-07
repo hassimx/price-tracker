@@ -70,7 +70,7 @@ def init_db():
 
 
 def save_product(conn, title, url, price, scraped_at):
-    # url is unique, so a second run only updates the title
+    # url is unique,so a second run only updates the title
     conn.execute(
         "INSERT INTO products (title, url, created_at) VALUES (?, ?, ?) "
         "ON CONFLICT(url) DO UPDATE SET title = excluded.title",
