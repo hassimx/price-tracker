@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% macro sort_link(key, label) %}
+  {% set active = sort == key %}
+  <a href="{{ url_with(sort=key, dir=('desc' if active and direction == 'asc' else 'asc'), page=None) }}">
+    {{ label }}{% if active %} {{ '&uarr;'|safe if direction == 'asc' else '&darr;'|safe }}{% endif %}
+  </a>
+{% endmacro %}
+
+{% block content %}
+<h1>Products</h1>
+
+<section class="stats">
+  <div class="stat"><span class="stat-label">Products</span><span class="stat-value">{{ stats.total }}</span></div>
+  <div class="stat"><span class="stat-label">Price drops</span><span class="stat-value down-text">{{ stats.drops }}</span></div>
+  <div class="stat"><span class="stat-label">Price rises</span><span class="stat-value up-text">{{ stats.rises }}</span></div>
+  <div class="stat">
+    <span class="stat-label">Last update</span>
+    <span class="stat-value small">{% if stats.last_update %}{{ stats.last_update[:16] }} UTC{% else %}–{% endif %}</span>
+  </div>
+</section>
+
+<form class="toolbar" method="get" action="{{ url_for('index') }}">
+  <input type="hidden" name="sort" value="{{ sort }}">
+  <input type="hidden" name="dir" value="{{ direction }}">
+  <label class="sr-only" for="q">Search by title</label>
+  <input id="q" class="search" type="search" name="q" value="{{ q }}" placeholder="Search by title">
+  <label class="sr-only" for="show">Filter</label>
+  <select id="show" name="show">
+    <option value="all" {% if show == 'all' %}selected{% endif %}>All products</option>
+    <option value="drops" {% if show == 'drops' %}selected{% endif %}>Price dropped</option>
+    <option value="rises" {% if show == 'rises' %}selected{% endif %}>Price rose</option>
+  </select>
+  <button class="button" type="submit">Apply</button>
+  {% if q or show != 'all' %}
+  <a class="reset" href="{{ url_for('index', sort=sort, dir=direction) }}">Reset</a>
+  {% endif %}
+</form>
+
+{% if products %}
+<div class="table-wrap">
+  <table class="products">
+    <thead>
+      <tr>
+        <th>{{ sort_link('title', 'Title') }}</th>
+        <th class="num">{{ sort_link('price', 'Current price') }}</th>
+        <th class="num">Previous price</th>
+        <th class="num">{{ sort_link('change', 'Change') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in products %}
+      <tr class="{% if p.change_pct is not none %}{{ 'down' if p.change_pct < 0 else 'up' }}{% endif %}">
+        <td class="title" data-label="Title">{{ p.title }}</td>
+        <td class="num" data-label="Current price">{{ p.price|money }}</td>
+        <td class="num" data-label="Previous price">{{ p.old_price|money }}</td>
+        <td class="num change" data-label="Change">
+          {% if p.change_pct is not none %}<span class="arrow" aria-hidden="true">{{ '▼' if p.change_pct < 0 else '▲' }}</span>{% endif %}
+          {{ p.change_pct|percent }}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% set first = (page - 1) * per_page + 1 %}
+{% set last = [page * per_page, total]|min %}
+<nav class="pagination" aria-label="Pages">
+  <span class="muted">Showing {{ first }}–{{ last }} of {{ total }}</span>
+  <span class="pager">
+    {% if page > 1 %}<a href="{{ url_with(page=page - 1) }}">Previous</a>{% endif %}
+    <span>Page {{ page }} of {{ pages }}</span>
+    {% if page < pages %}<a href="{{ url_with(page=page + 1) }}">Next</a>{% endif %}
+  </span>
+</nav>
+
+{% elif stats.total == 0 %}
+<div class="empty">
+  <p>No products yet.</p>
+  <p class="muted">Run <code>python scraper.py</code> to collect some, then reload this page.</p>
+</div>
+{% else %}
+<div class="empty">
+  <p>Nothing matches these filters.</p>
+</div>
+{% endif %}
+{% endblock %}
