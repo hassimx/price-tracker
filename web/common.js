@@ -36,7 +36,8 @@ const PT = (function () {
   }
 
   async function loadData() {
-    const res = await fetch("data.json");
+    // no-cache: always ask the server if the file changed, so new prices show up right away
+    const res = await fetch("data.json", { cache: "no-cache" });
     if (!res.ok) throw new Error("data.json returned " + res.status);
     return res.json();
   }
