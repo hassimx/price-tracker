@@ -158,8 +158,20 @@
       data: {
         labels: days.slice(1).map(PT.shortDate),
         datasets: [
-          { label: "More expensive", data: rises, backgroundColor: PT.cssVar("--up") },
-          { label: "Cheaper", data: drops, backgroundColor: PT.cssVar("--down") },
+          {
+            label: "More expensive",
+            data: rises,
+            backgroundColor: PT.cssVar("--up"),
+            borderRadius: { topLeft: 4, topRight: 4 },
+            borderSkipped: false,
+          },
+          {
+            label: "Cheaper",
+            data: drops,
+            backgroundColor: PT.cssVar("--down"),
+            borderRadius: { bottomLeft: 4, bottomRight: 4 },
+            borderSkipped: false,
+          },
         ],
       },
       options: {
