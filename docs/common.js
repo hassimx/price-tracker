@@ -43,8 +43,8 @@ const PT = (function () {
 
   // small inline line chart for a table row, the dot marks today's price
   function sparkline(prices, kind) {
-    const width = 112;
-    const height = 30;
+    const width = 124;
+    const height = 32;
     const pad = 4;
     const points = [];
     prices.forEach((v, i) => {

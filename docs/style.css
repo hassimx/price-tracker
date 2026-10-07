@@ -1,14 +1,14 @@
 :root {
   --paper: #ffffff;
+  --soft: #f5f3ea;
   --ink: #151515;
   --muted: #5b5b57;
-  --line: #cfcfc8;
+  --line: #dddbd0;
   --tag: #ffd84d;
-  --focus: #ffbf47;
   --down: #16703a;
-  --down-bg: #e9f5ed;
+  --down-bg: #f1f9f4;
   --up: #b3261e;
-  --up-bg: #fcebe9;
+  --up-bg: #fff4f2;
   --series: #151515;
   --head: "Bitter", Georgia, "Times New Roman", serif;
   --body: "Atkinson Hyperlegible Next", "Segoe UI", system-ui, sans-serif;
@@ -21,7 +21,7 @@
 
 body {
   margin: 0;
-  font: 17px/1.5 var(--body);
+  font: 17px/1.55 var(--body);
   color: var(--ink);
   background: var(--paper);
 }
@@ -37,15 +37,15 @@ input {
 }
 
 :focus-visible {
-  outline: 3px solid var(--focus);
-  outline-offset: 1px;
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
 }
 
 .wrap {
-  max-width: 980px;
+  max-width: 1040px;
   margin: 0 auto;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
 h1,
@@ -53,17 +53,17 @@ h2,
 h3 {
   font-family: var(--head);
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 h1 {
-  margin: 28px 0 10px;
-  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  margin: 0 0 16px;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
 }
 
 h2 {
   margin: 0 0 4px;
-  font-size: 1.35rem;
+  font-size: 1.45rem;
 }
 
 .sr-only {
@@ -75,39 +75,68 @@ h2 {
   white-space: nowrap;
 }
 
-/* top bar */
+/* header */
 
 .top {
-  border-bottom: 1px solid var(--ink);
+  background: var(--tag);
+  border-bottom: 2px solid var(--ink);
 }
 
 .top .wrap {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
+  gap: 16px;
   padding-top: 14px;
   padding-bottom: 14px;
 }
 
 .brand {
-  font: 700 1.3rem var(--head);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: 700 1.45rem var(--head);
   text-decoration: none;
 }
 
-.top nav a {
-  font-size: 0.95rem;
+.logo {
+  display: block;
 }
 
-/* intro */
+.gh {
+  padding: 5px 14px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: 1.5px solid var(--ink);
+  border-radius: 3px;
+}
+
+.gh:hover {
+  color: var(--tag);
+  background: var(--ink);
+}
+
+/* intro and summary */
+
+.lead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 290px;
+  gap: 56px;
+  align-items: start;
+  margin: 48px 0 56px;
+}
 
 .intro {
-  max-width: 64ch;
-  margin: 0 0 12px;
+  max-width: 54ch;
+  margin: 0 0 18px;
+  font-size: 1.15rem;
 }
 
 .demo {
   margin: 0;
+  padding: 10px 14px;
   font-size: 0.95rem;
+  border: 1px solid var(--ink);
 }
 
 .sticker {
@@ -118,6 +147,70 @@ h2 {
   font-size: 0.85rem;
   background: var(--tag);
   border-radius: 2px;
+}
+
+.receipt {
+  position: relative;
+  padding: 20px 22px 24px;
+  font: 0.9rem/1.5 var(--mono);
+  background: var(--soft);
+}
+
+/* torn edge at the bottom */
+.receipt::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background:
+    linear-gradient(to bottom right, var(--soft) 50%, transparent 50%) 0 0 / 16px 8px repeat-x,
+    linear-gradient(to bottom left, var(--soft) 50%, transparent 50%) 0 0 / 16px 8px repeat-x;
+}
+
+.receipt h2 {
+  margin: 0 0 10px;
+  font: 600 0.9rem var(--mono);
+  text-align: center;
+}
+
+.receipt dl {
+  margin: 0;
+  padding: 10px 0;
+  border-top: 1px dashed var(--muted);
+  border-bottom: 1px dashed var(--muted);
+}
+
+.receipt dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 0;
+}
+
+.receipt dt {
+  color: var(--muted);
+}
+
+.receipt dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.receipt .down dd {
+  color: var(--down);
+}
+
+.receipt .up dd {
+  color: var(--up);
+}
+
+.receipt p {
+  margin: 10px 0 0;
+  font-size: 0.82rem;
+  text-align: center;
+  color: var(--muted);
 }
 
 .notice {
@@ -131,34 +224,34 @@ h2 {
 .split {
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-  gap: 40px;
-  margin: 36px 0;
+  gap: 56px;
+  margin: 0 0 64px;
 }
 
 .note {
-  margin: 0 0 14px;
-  font-size: 0.92rem;
+  margin: 0 0 16px;
+  font-size: 0.95rem;
   color: var(--muted);
 }
 
 .chart-box {
   position: relative;
-  height: 300px;
+  height: 310px;
 }
 
 .chart-box.tall {
-  height: 360px;
+  height: 380px;
 }
 
 .chart-note {
   margin: 10px 0 0;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   color: var(--muted);
 }
 
 h3.mini {
-  margin: 18px 0 2px;
-  font-size: 1rem;
+  margin: 20px 0 2px;
+  font-size: 1.05rem;
 }
 
 .movers {
@@ -172,7 +265,7 @@ h3.mini {
   grid-template-columns: minmax(0, auto) minmax(14px, 1fr) auto auto;
   gap: 0 8px;
   align-items: baseline;
-  padding: 6px 0;
+  padding: 7px 0;
   text-decoration: none;
 }
 
@@ -194,15 +287,20 @@ h3.mini {
 }
 
 .m-price {
-  font: 0.8rem var(--mono);
+  font: 0.82rem var(--mono);
   color: var(--muted);
 }
 
 /* change and trend */
 
 .chip {
-  font: 600 0.88rem var(--mono);
+  display: inline-block;
+  padding: 1px 7px;
+  font: 600 0.85rem var(--mono);
   white-space: nowrap;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  background: var(--paper);
 }
 
 .chip.down {
@@ -215,6 +313,7 @@ h3.mini {
 
 .chip.flat {
   color: var(--muted);
+  border-color: var(--line);
 }
 
 .spark {
@@ -224,7 +323,7 @@ h3.mini {
 .spark polyline {
   fill: none;
   stroke: var(--ink);
-  stroke-width: 1.25;
+  stroke-width: 1.3;
   stroke-linejoin: round;
   stroke-linecap: round;
 }
@@ -247,17 +346,21 @@ h3.mini {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px 16px;
-  margin-bottom: 14px;
+  gap: 10px 18px;
+  margin-bottom: 18px;
 }
 
 .search input {
-  width: 240px;
-  height: 38px;
-  padding: 0 10px;
+  width: 250px;
+  height: 40px;
+  padding: 0 12px;
   background: var(--paper);
-  border: 1px solid var(--ink);
+  border: 1.5px solid var(--ink);
   border-radius: 3px;
+}
+
+.search input::placeholder {
+  color: var(--muted);
 }
 
 .tabs {
@@ -267,14 +370,15 @@ h3.mini {
 }
 
 .tabs button {
-  padding: 3px 10px;
+  padding: 4px 11px;
   background: none;
   border: 0;
   border-radius: 2px;
   cursor: pointer;
   text-decoration: underline;
   text-decoration-color: var(--line);
-  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
 }
 
 .tabs button:hover {
@@ -296,10 +400,10 @@ h3.mini {
 }
 
 .btn {
-  height: 38px;
-  padding: 0 14px;
+  height: 40px;
+  padding: 0 16px;
   background: var(--paper);
-  border: 1px solid var(--ink);
+  border: 1.5px solid var(--ink);
   border-radius: 3px;
   cursor: pointer;
 }
@@ -321,11 +425,11 @@ h3.mini {
 .books {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
 }
 
 .books th {
-  padding: 8px 12px;
+  padding: 10px 14px;
+  font-size: 0.95rem;
   font-weight: 700;
   text-align: left;
   white-space: nowrap;
@@ -346,47 +450,73 @@ h3.mini {
 }
 
 .books td {
-  padding: 9px 12px;
+  padding: 11px 14px;
   vertical-align: middle;
-  border-bottom: 1px dashed var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.books td:first-child {
+  box-shadow: inset 4px 0 0 transparent;
 }
 
 .books .num {
   font-family: var(--mono);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   text-align: right;
   white-space: nowrap;
 }
 
 .books th.num {
   font-family: var(--body);
-  font-size: inherit;
+  font-size: 0.95rem;
+}
+
+.books tbody tr:hover td {
+  background: var(--soft);
 }
 
 .books tr.down td {
   background: var(--down-bg);
 }
 
+.books tr.down td:first-child {
+  box-shadow: inset 4px 0 0 var(--down);
+}
+
 .books tr.up td {
   background: var(--up-bg);
 }
 
+.books tr.up td:first-child {
+  box-shadow: inset 4px 0 0 var(--up);
+}
+
+.books tr.down:hover td,
+.books tr.up:hover td {
+  filter: brightness(0.97);
+}
+
 .books .c-title a {
-  text-decoration-thickness: 1px;
-  text-decoration-color: var(--muted);
-  text-underline-offset: 3px;
+  text-decoration: none;
 }
 
 .books .c-title a:hover {
-  text-decoration-color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .books .c-trend {
-  width: 130px;
+  width: 140px;
+}
+
+.books .loading {
+  padding: 40px 14px;
+  color: var(--muted);
+  background: none;
 }
 
 .empty {
-  padding: 28px 0 8px;
+  padding: 32px 0 8px;
   color: var(--muted);
 }
 
@@ -396,20 +526,20 @@ h3.mini {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin-top: 14px;
+  margin-top: 18px;
   font-size: 0.95rem;
 }
 
 .pager-btns {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .pager button {
-  padding: 3px 14px;
+  padding: 4px 16px;
   background: var(--paper);
-  border: 1px solid var(--ink);
+  border: 1.5px solid var(--ink);
   border-radius: 3px;
   cursor: pointer;
 }
@@ -427,24 +557,43 @@ h3.mini {
 /* book page */
 
 .crumb {
-  margin: 20px 0 0;
-}
-
-.back {
+  margin: 28px 0 18px;
   font-size: 0.95rem;
 }
 
+.book-title {
+  margin-bottom: 10px;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+}
+
 .source {
-  margin: 0 0 8px;
+  margin: 0 0 18px;
   font-size: 0.95rem;
 }
 
 .product {
   display: grid;
-  grid-template-columns: 250px minmax(0, 1fr);
-  gap: 40px;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 48px;
   align-items: start;
-  margin-top: 24px;
+  margin-top: 28px;
+}
+
+/* a price tag with a hole */
+.price-tag {
+  display: inline-block;
+  padding: 10px 38px 10px 44px;
+  font: 800 2.3rem/1.2 var(--head);
+  background:
+    radial-gradient(circle at 20px 50%, var(--paper) 6px, transparent 6.5px),
+    var(--tag);
+  clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 50%, calc(100% - 24px) 100%, 0 100%);
+}
+
+.price-line {
+  margin: 12px 0 22px;
+  font-size: 0.95rem;
+  color: var(--muted);
 }
 
 .facts {
@@ -454,8 +603,8 @@ h3.mini {
 
 .facts th,
 .facts td {
-  padding: 8px 0;
-  border-bottom: 1px dashed var(--line);
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
 }
 
 .facts tr:first-child th,
@@ -480,6 +629,34 @@ h3.mini {
   white-space: nowrap;
 }
 
+.neighbours {
+  display: grid;
+  gap: 8px;
+  margin-top: 22px;
+  font-size: 0.92rem;
+}
+
+.neighbours a {
+  display: block;
+  overflow: hidden;
+  padding: 8px 12px;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+}
+
+.neighbours a:hover {
+  background: var(--soft);
+  border-color: var(--ink);
+}
+
+.neighbours small {
+  display: block;
+  color: var(--muted);
+}
+
 .chart-head {
   display: flex;
   flex-wrap: wrap;
@@ -491,29 +668,79 @@ h3.mini {
 /* footer */
 
 .site-footer {
-  margin-top: 48px;
-  padding: 16px 0 32px;
-  font-size: 0.92rem;
-  color: var(--muted);
-  border-top: 1px solid var(--ink);
+  margin-top: 80px;
+  padding: 40px 0 44px;
+  font-size: 0.95rem;
+  color: #e9e7dc;
+  background: var(--ink);
+}
+
+.foot {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 40px;
+}
+
+.site-footer h2 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  color: var(--tag);
 }
 
 .site-footer p {
-  margin: 0 0 4px;
+  margin: 0;
+}
+
+.site-footer ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer li {
+  margin-bottom: 4px;
+}
+
+.site-footer a {
+  text-underline-offset: 3px;
+}
+
+.site-footer a:hover {
+  color: var(--tag);
 }
 
 /* tablets and phones */
 
-@media (max-width: 760px) {
+@media (max-width: 820px) {
+  .lead,
   .split,
   .product {
     grid-template-columns: minmax(0, 1fr);
-    gap: 28px;
+    gap: 36px;
   }
 
+  .lead {
+    margin: 32px 0 44px;
+  }
+
+  .split {
+    margin-bottom: 48px;
+  }
+
+  .foot {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+}
+
+@media (max-width: 640px) {
   .wrap {
     padding-left: 16px;
     padding-right: 16px;
+  }
+
+  .brand {
+    font-size: 1.25rem;
   }
 
   .search,
@@ -526,7 +753,7 @@ h3.mini {
   }
 
   .chart-box.tall {
-    height: 280px;
+    height: 290px;
   }
 
   /* table rows become short lists */
@@ -550,13 +777,34 @@ h3.mini {
     border-bottom: 1px solid var(--ink);
   }
 
-  .books td {
+  .books tr.down td,
+  .books tr.up td {
+    background: none;
+  }
+
+  .books tr.down {
+    background: var(--down-bg);
+    box-shadow: inset 4px 0 0 var(--down);
+  }
+
+  .books tr.up {
+    background: var(--up-bg);
+    box-shadow: inset 4px 0 0 var(--up);
+  }
+
+  .books tbody tr:hover td {
+    background: none;
+  }
+
+  .books td,
+  .books td:first-child {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding: 3px 10px;
+    padding: 3px 14px;
     border: 0;
+    box-shadow: none;
   }
 
   .books td::before {
@@ -578,5 +826,14 @@ h3.mini {
 
   .books .c-trend {
     width: auto;
+  }
+
+  .books .loading {
+    display: block;
+    padding: 24px 14px;
+  }
+
+  .books .loading::before {
+    content: none;
   }
 }

@@ -15,11 +15,12 @@
   }
 
   const id = parseInt(new URLSearchParams(location.search).get("id"), 10);
-  const p = data.products.find((item) => item.id === id);
-  if (!p) {
+  const index = data.products.findIndex((item) => item.id === id);
+  if (index === -1) {
     showMessage("Book not found", "There is no book with this id.");
     return;
   }
+  const p = data.products[index];
 
   await PT.setupChartDefaults();
   document.title = p.title + " - Price Tracker";
@@ -37,19 +38,31 @@
   const buttons = ranges.map((n) => `<button type="button" data-range="${n}" aria-pressed="false">${n} days</button>`);
   buttons.push(`<button type="button" data-range="all" aria-pressed="true">All</button>`);
 
+  // books are sorted by title, so the neighbours are the previous and next titles
+  const prev = data.products[index - 1];
+  const next = data.products[index + 1];
+  const neighbour = (book, label) =>
+    book ? `<a href="product.html?id=${book.id}"><small>${label}</small>${PT.esc(book.title)}</a>` : "";
+
+  const previousLine = p.old == null ? "Same price as on every day so far." : `Was ${PT.money(p.old)} before.`;
+
   content.innerHTML =
     `<div class="product">` +
+    `<aside>` +
+    `<div class="price-tag">${PT.money(p.price)}</div>` +
+    `<p class="price-line">${PT.chip(p)} ${previousLine}</p>` +
     `<table class="facts"><tbody>` +
-    `<tr><th>Price</th><td>${PT.money(p.price)}</td></tr>` +
+    `<tr><th>Price now</th><td>${PT.money(p.price)}</td></tr>` +
     `<tr><th>Before</th><td>${PT.money(p.old)}</td></tr>` +
-    `<tr><th>Change</th><td>${PT.chip(p)}</td></tr>` +
     `<tr><th>Lowest</th><td>${PT.money(lowest)}</td></tr>` +
     `<tr><th>Highest</th><td>${PT.money(highest)}</td></tr>` +
     `<tr><th>Average</th><td>${PT.money(average)}</td></tr>` +
     `</tbody></table>` +
+    `<nav class="neighbours" aria-label="Other books">${neighbour(prev, "Previous book")}${neighbour(next, "Next book")}</nav>` +
+    `</aside>` +
     `<section>` +
     `<div class="chart-head"><div><h2>Price history</h2>` +
-    `<p class="note">One point per day. Green dot: lowest price, red dot: highest.</p></div>` +
+    `<p class="note">One point per day. The dashed line is the average price.</p></div>` +
     (days.length > 7 ? `<div class="tabs" id="range-seg" role="group" aria-label="Time range">${buttons.join("")}</div>` : "") +
     `</div>` +
     `<div class="chart-box tall"><canvas id="price-chart" role="img" aria-label="Line chart of the price over time"></canvas></div>` +
@@ -79,6 +92,45 @@
       color: values.map((v, i) => (mark && i === minAt ? PT.cssVar("--down") : mark && i === maxAt ? PT.cssVar("--up") : PT.cssVar("--series"))),
     };
   }
+
+  // writes the price next to the lowest, highest and newest point, and labels the average line
+  const valueLabels = {
+    id: "valueLabels",
+    afterDatasetsDraw(chart) {
+      const values = chart.data.datasets[0].data;
+      const seen = values.map((v, i) => [v, i]).filter((pair) => pair[0] != null);
+      if (seen.length < 2) return;
+
+      const lowAt = seen.reduce((a, b) => (b[0] < a[0] ? b : a));
+      const highAt = seen.reduce((a, b) => (b[0] > a[0] ? b : a));
+      const lastAt = seen[seen.length - 1];
+      const { ctx, chartArea, scales } = chart;
+      const points = chart.getDatasetMeta(0).data;
+
+      ctx.save();
+      ctx.font = "600 12px " + PT.cssVar("--mono");
+      const put = (text, x, y, color, align) => {
+        const width = ctx.measureText(text).width;
+        const left = align === "center" ? x - width / 2 : x;
+        const clamped = Math.min(Math.max(left, chartArea.left), chartArea.right - width);
+        ctx.fillStyle = color;
+        ctx.textAlign = "left";
+        ctx.fillText(text, clamped, y);
+      };
+
+      const avg = scales.y.getPixelForValue(average);
+      put("average " + PT.money(average), chartArea.left + 4, avg + 16, PT.cssVar("--muted"), "left");
+
+      if (lowAt[0] !== highAt[0]) {
+        put(PT.money(highAt[0]), points[highAt[1]].x, points[highAt[1]].y - 12, PT.cssVar("--up"), "center");
+        put(PT.money(lowAt[0]), points[lowAt[1]].x, points[lowAt[1]].y + 22, PT.cssVar("--down"), "center");
+      }
+      if (lastAt[1] !== highAt[1] && lastAt[1] !== lowAt[1]) {
+        put(PT.money(lastAt[0]), points[lastAt[1]].x, points[lastAt[1]].y - 12, PT.cssVar("--ink"), "center");
+      }
+      ctx.restore();
+    },
+  };
 
   const first = view("all");
   const look = styling(first.values);
@@ -114,13 +166,18 @@
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: { padding: { top: 22, bottom: 4, right: 6 } },
       interaction: { mode: "index", intersect: false },
       scales: {
         x: { grid: { display: false }, ticks: { maxTicksLimit: 8 } },
-        y: { grid: { color: PT.cssVar("--line") }, ticks: { callback: (value) => "£" + value.toFixed(2) } },
+        y: {
+          grace: "10%",
+          grid: { color: PT.cssVar("--line") },
+          ticks: { callback: (value) => "£" + value.toFixed(2), font: { family: PT.cssVar("--mono"), size: 12 } },
+        },
       },
       plugins: {
-        legend: { position: "bottom", labels: { usePointStyle: true, boxWidth: 10, boxHeight: 10 } },
+        legend: { display: false },
         tooltip: {
           callbacks: {
             title: (items) => PT.longDate(shown.days[items[0].dataIndex]),
@@ -129,6 +186,7 @@
         },
       },
     },
+    plugins: [valueLabels],
   });
 
   const rangeSeg = document.getElementById("range-seg");

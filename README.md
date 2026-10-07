@@ -8,6 +8,8 @@ The live demo uses generated price history, see "Demo data" below.
 
 ![Dashboard](docs/img/dashboard.png)
 
+![Price chart of one book](docs/img/product.png)
+
 ## Install and run
 
 You need Python 3.9 or newer (I tested it on 3.14).
