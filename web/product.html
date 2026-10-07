@@ -4,9 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Book - Price Tracker</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='3' fill='%23ffd84d'/%3E%3Cpolyline points='5,22 12,15 17,19 27,8' fill='none' stroke='%23151515' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <meta name="theme-color" content="#ffd84d">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23ffd84d'/%3E%3Cpath d='M6 8h14l7 8-7 8H6z' fill='%23151515'/%3E%3Ccircle cx='11' cy='16' r='2.2' fill='%23ffd84d'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/bitter@5.3.0/700.css" integrity="sha384-UmsHPPY2eGXaZndoxfvKd3qJrhk6GvfbBQTC5StloyklKpSZ4f7YfqDIT03EdZRt" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/bitter@5.3.0/800.css" integrity="sha384-u+Qrt5WpRyJAo4AguV4HkvAfZW3+r4YS47RLIOdlVVPGE8x/LpPNtWfiLk4YIozF" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/atkinson-hyperlegible-next@5.3.0/400.css" integrity="sha384-4OBb7U3mVhzikR27aM/QG22Yq6XmOpS+8mXqer6qFl9hcprpGZcFXE42jlNza6bm" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/atkinson-hyperlegible-next@5.3.0/700.css" integrity="sha384-q1FSVZbRHD6coqQdORqXeVbTEuV7tS8+BMg+kK245q9+0jVI4XNCvOtgG5vEFNb+" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/spline-sans-mono@5.3.0/400.css" integrity="sha384-oynOfsbIUFVoom1gTOcNsc4yjc26irw3Wd+LBapTY+xJQYJEXOXdPgbiFvaSKAWp" crossorigin="anonymous">
@@ -16,24 +18,46 @@
 <body>
   <header class="top">
     <div class="wrap">
-      <a class="brand" href="./">Price Tracker</a>
-      <nav><a href="https://github.com/hassimx/price-tracker">Code on GitHub</a></nav>
+      <a class="brand" href="./">
+        <svg class="logo" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 5h16l10 11-10 11H3z" fill="#151515"/><circle cx="9" cy="16" r="2.6" fill="#ffd84d"/></svg>
+        Price Tracker
+      </a>
+      <a class="gh" href="https://github.com/hassimx/price-tracker">Code on GitHub</a>
     </div>
   </header>
 
   <main class="wrap">
-    <p class="crumb"><a class="back" href="./#books">&larr; All books</a></p>
-    <h1 id="title">Loading…</h1>
+    <p class="crumb"><a href="./#books">&larr; All books</a></p>
+    <h1 class="book-title" id="title">Book</h1>
     <p class="source" id="source"></p>
     <p class="demo" id="demo-note" hidden><span class="sticker">Demo data</span>The price history is generated. Only the newest price is real.</p>
 
     <noscript><p class="notice">This page needs JavaScript to show the prices.</p></noscript>
-    <div id="content"></div>
+    <div id="content"><p class="chart-note">Loading prices…</p></div>
   </main>
 
   <footer class="site-footer">
-    <div class="wrap">
-      <p>Prices come from <a href="https://books.toscrape.com">books.toscrape.com</a>, a practice site for scrapers. Made with Python, Flask, SQLite and Chart.js.</p>
+    <div class="wrap foot">
+      <div>
+        <h2>About</h2>
+        <p>A portfolio project. A Python scraper collects the prices, SQLite stores the history and Flask serves this page. The online version is a static copy that runs in your browser.</p>
+      </div>
+      <div>
+        <h2>Built with</h2>
+        <ul>
+          <li>Python, requests, BeautifulSoup</li>
+          <li>SQLite</li>
+          <li>Flask</li>
+          <li>JavaScript, Chart.js</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Links</h2>
+        <ul>
+          <li><a href="https://github.com/hassimx/price-tracker">Source code on GitHub</a></li>
+          <li><a href="https://books.toscrape.com">books.toscrape.com</a></li>
+        </ul>
+      </div>
     </div>
   </footer>
 

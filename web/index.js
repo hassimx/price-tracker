@@ -166,9 +166,14 @@
         responsive: true,
         maintainAspectRatio: false,
         interaction: { mode: "index", intersect: false },
+        datasets: { bar: { categoryPercentage: 0.9, barPercentage: 0.85 } },
         scales: {
           x: { stacked: true, grid: { display: false }, ticks: { maxTicksLimit: 8 } },
-          y: { stacked: true, grid: { color: PT.cssVar("--line") }, ticks: { callback: (value) => Math.abs(value) } },
+          y: {
+            stacked: true,
+            grid: { color: PT.cssVar("--line") },
+            ticks: { callback: (value) => Math.abs(value), font: { family: PT.cssVar("--mono"), size: 12 } },
+          },
         },
         plugins: {
           legend: { position: "bottom", labels: { boxWidth: 12, boxHeight: 12 } },
@@ -194,11 +199,11 @@
   const total = products.length.toLocaleString("en-GB");
   const updated = data.updated ? PT.longDate(data.updated.slice(0, 10)) : null;
   $("#title").textContent = `Prices of ${total} books`;
-  $("#intro").innerHTML =
-    `A Python script copies the catalogue of books.toscrape.com and saves every price in SQLite. ` +
-    `Since the previous price, <strong>${drops}</strong> books got cheaper, <strong>${rises}</strong> got more expensive ` +
-    `and <strong>${flat}</strong> stayed the same.` +
-    (updated ? ` Last update: ${updated}.` : "");
+  $("#r-total").textContent = total;
+  $("#r-drops").textContent = drops.toLocaleString("en-GB");
+  $("#r-rises").textContent = rises.toLocaleString("en-GB");
+  $("#r-flat").textContent = flat.toLocaleString("en-GB");
+  $("#r-updated").textContent = updated ? "Updated " + updated : "No prices yet";
   $("#demo-note").hidden = !data.demo;
 
   const changed = products.filter((p) => p.change != null);
