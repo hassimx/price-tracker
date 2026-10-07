@@ -8,7 +8,12 @@ import db
 DAYS = 30
 
 
-def make_prices(current, rng):
+def make_moods(rng):
+    # some days have more price changes than others, and lean up or down
+    return [(rng.uniform(0.1, 0.5), rng.uniform(0.2, 0.8)) for _ in range(DAYS)]
+
+
+def make_prices(current, rng, moods):
     # walk backwards from today's price, so the last point matches the real one
     if rng.random() < 0.15:
         return [current] * DAYS  # some books never change price
@@ -19,9 +24,12 @@ def make_prices(current, rng):
 
     prices = [current]
     price = current
-    for _ in range(DAYS - 1):
-        if rng.random() < 0.3:
-            price = price * (1 + rng.uniform(-volatility, volatility))
+    for day in range(DAYS - 1, 0, -1):
+        chance, chance_up = moods[day]
+        if rng.random() < chance:
+            size = rng.uniform(0.01, volatility)
+            went_up = rng.random() < chance_up
+            price = price / (1 + size) if went_up else price / (1 - size)
             price = round(min(max(price, low), high), 2)
         prices.append(price)
     return prices[::-1]
@@ -38,10 +46,11 @@ def main():
         sys.exit("No products in the database yet. Run scraper.py first.")
 
     rng = random.Random(args.seed)
+    moods = make_moods(rng)
     now = datetime.now(timezone.utc)
     rows = []
     for product_id, current in products:
-        for i, price in enumerate(make_prices(current, rng)):
+        for i, price in enumerate(make_prices(current, rng, moods)):
             day = now - timedelta(days=DAYS - 1 - i)
             rows.append((product_id, price, day.strftime("%Y-%m-%d %H:%M:%S"), "demo"))
 
