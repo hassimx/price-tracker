@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Price Tracker - daily book prices</title>
+  <meta name="description" content="Daily prices for 1,000 books with trends, the biggest movers and a price chart for every title. Built with Python, Flask and SQLite.">
+  <meta property="og:title" content="Price Tracker">
+  <meta property="og:description" content="Daily prices for 1,000 books with trends, the biggest movers and a price chart for every title.">
+  <meta name="theme-color" content="#14203a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23c8923a'/%3E%3Cpolyline points='5,22 12,15 17,19 27,8' fill='none' stroke='%2314203a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="wrap bar">
+      <a class="brand" href="./">
+        <svg class="mark" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8"/><polyline points="5,22 12,15 17,19 27,8"/></svg>
+        Price Tracker
+      </a>
+      <nav>
+        <a href="#books">All books</a>
+        <a href="https://github.com/hassimx/price-tracker">Source code</a>
+      </nav>
+    </div>
+
+    <section class="wrap hero">
+      <p class="kicker">books.toscrape.com &middot; price log</p>
+      <h1>Every book price, <em>tracked day by day.</em></h1>
+      <p class="lede">A scraper collects the catalogue, SQLite keeps the history and this page shows what moved.</p>
+      <span class="badge" id="demo-badge" hidden>Demo data</span>
+      <dl class="figures">
+        <div><dt>Books</dt><dd id="fig-total">–</dd></div>
+        <div><dt>Got cheaper</dt><dd id="fig-drops">–</dd></div>
+        <div><dt>Got pricier</dt><dd id="fig-rises">–</dd></div>
+        <div><dt>Last update</dt><dd class="small" id="fig-updated">–</dd></div>
+      </dl>
+    </section>
+  </header>
+
+  <main class="wrap">
+    <noscript><p class="notice">This page needs JavaScript to show the prices.</p></noscript>
+    <p class="notice" id="error" hidden>Could not load the price data. Try reloading the page.</p>
+
+    <div class="overview">
+      <section class="panel grow">
+        <h2>Price moves per day</h2>
+        <p class="sub">How many books got pricier (up) or cheaper (down) each day.</p>
+        <div class="chart-box">
+          <canvas id="moves-chart" role="img" aria-label="Bar chart of price rises and drops per day"></canvas>
+        </div>
+        <p class="chart-note" id="moves-note"></p>
+      </section>
+
+      <section class="panel">
+        <h2>Biggest moves</h2>
+        <p class="sub">Latest price change of each book.</p>
+        <h3 class="mini">Dropped most</h3>
+        <ul class="movers" id="drops"></ul>
+        <h3 class="mini">Rose most</h3>
+        <ul class="movers" id="rises"></ul>
+      </section>
+    </div>
+
+    <section class="panel" id="books">
+      <h2>All books</h2>
+      <p class="sub">Green rows got cheaper, red rows got pricier. Click a title to see its price chart.</p>
+
+      <div class="toolbar">
+        <label class="search">
+          <span class="sr-only">Search by title</span>
+          <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5"/><line x1="11" y1="11" x2="14.5" y2="14.5"/></svg>
+          <input id="q" type="search" placeholder="Search by title" autocomplete="off">
+          <kbd aria-hidden="true">/</kbd>
+        </label>
+        <div class="seg" id="show-seg" role="group" aria-label="Filter by price change">
+          <button type="button" data-show="all" aria-pressed="true">All <span class="count"></span></button>
+          <button type="button" data-show="drops" aria-pressed="false">Cheaper <span class="count"></span></button>
+          <button type="button" data-show="rises" aria-pressed="false">Pricier <span class="count"></span></button>
+          <button type="button" data-show="flat" aria-pressed="false">Unchanged <span class="count"></span></button>
+        </div>
+        <button type="button" class="btn push-right" id="csv">Download CSV</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="books">
+          <thead>
+            <tr>
+              <th data-sort="title"><button type="button" data-sort="title">Book</button></th>
+              <th>Trend</th>
+              <th class="num" data-sort="price"><button type="button" data-sort="price">Current price</button></th>
+              <th class="num">Previous price</th>
+              <th class="num" data-sort="change"><button type="button" data-sort="change">Change</button></th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <p class="empty" id="empty" hidden>No books match your search.</p>
+
+      <nav class="pager" aria-label="Pages">
+        <span id="range" aria-live="polite"></span>
+        <span class="pager-btns">
+          <button type="button" id="prev">Previous</button>
+          <span id="page-info"></span>
+          <button type="button" id="next">Next</button>
+        </span>
+      </nav>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Prices come from <a href="https://books.toscrape.com">books.toscrape.com</a>, a practice site for scrapers. Built with Python, Flask, SQLite and Chart.js.</p>
+      <p id="demo-note" hidden>The price history on this page is generated demo data, not real price changes.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"
+          integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC"
+          crossorigin="anonymous"></script>
+  <script src="common.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
