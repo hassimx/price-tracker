@@ -184,7 +184,7 @@
           y: {
             stacked: true,
             grid: { color: PT.cssVar("--line") },
-            ticks: { callback: (value) => Math.abs(value), font: { family: PT.cssVar("--mono"), size: 12 } },
+            ticks: { callback: (value) => Math.abs(value), font: { family: PT.cssVar("--body"), size: 12 } },
           },
         },
         plugins: {

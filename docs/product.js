@@ -108,7 +108,7 @@
       const points = chart.getDatasetMeta(0).data;
 
       ctx.save();
-      ctx.font = "600 12px " + PT.cssVar("--mono");
+      ctx.font = "700 12px " + PT.cssVar("--body");
       const put = (text, x, y, color, align) => {
         const width = ctx.measureText(text).width;
         const left = align === "center" ? x - width / 2 : x;
@@ -173,7 +173,7 @@
         y: {
           grace: "10%",
           grid: { color: PT.cssVar("--line") },
-          ticks: { callback: (value) => "£" + value.toFixed(2), font: { family: PT.cssVar("--mono"), size: 12 } },
+          ticks: { callback: (value) => "£" + value.toFixed(2), font: { family: PT.cssVar("--body"), size: 12 } },
         },
       },
       plugins: {
