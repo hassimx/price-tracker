@@ -434,6 +434,7 @@ table.products {
     content: attr(data-label);
     color: var(--muted);
     font-size: 0.875rem;
+    font-weight: 400;
   }
 
   .products td.title {

@@ -57,8 +57,10 @@
         <td class="num" data-label="Current price">{{ p.price|money }}</td>
         <td class="num" data-label="Previous price">{{ p.old_price|money }}</td>
         <td class="num change" data-label="Change">
-          {% if p.change_pct is not none %}<span class="arrow" aria-hidden="true">{{ '▼' if p.change_pct < 0 else '▲' }}</span>{% endif %}
-          {{ p.change_pct|percent }}
+          <span>
+            {% if p.change_pct is not none %}<span class="arrow" aria-hidden="true">{{ '▼' if p.change_pct < 0 else '▲' }}</span>{% endif %}
+            {{ p.change_pct|percent }}
+          </span>
         </td>
       </tr>
       {% endfor %}
