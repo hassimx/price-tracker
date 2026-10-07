@@ -35,6 +35,8 @@
   {% if q or show != 'all' %}
   <a class="reset" href="{{ url_for('index', sort=sort, dir=direction) }}">Reset</a>
   {% endif %}
+  <a class="button secondary push-right"
+     href="{{ url_for('export_csv', q=q or None, show=show if show != 'all' else None, sort=sort, dir=direction) }}">Download CSV</a>
 </form>
 
 {% if products %}

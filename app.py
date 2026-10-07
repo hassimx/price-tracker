@@ -1,6 +1,9 @@
+import csv
+import io
 import math
+from datetime import date
 
-from flask import Flask, abort, jsonify, render_template, request, url_for
+from flask import Flask, Response, abort, jsonify, render_template, request, url_for
 
 import db
 
@@ -64,6 +67,37 @@ def index():
         "index.html",
         products=products, total=total, page=page, pages=pages, per_page=PER_PAGE,
         q=q, show=show, sort=sort, direction=direction, stats=db.get_stats(),
+    )
+
+
+def csv_safe(text):
+    # stop excel from treating a title as a formula
+    return "'" + text if text.startswith(("=", "+", "-", "@")) else text
+
+
+@app.route("/export.csv")
+def export_csv():
+    q, show = get_filters()
+    sort, direction = get_sorting()
+    products = db.list_products(q, show, sort, direction)
+
+    out = io.StringIO()
+    writer = csv.writer(out)
+    writer.writerow(["title", "url", "price", "previous_price", "change_percent"])
+    for p in products:
+        writer.writerow([
+            csv_safe(p["title"]),
+            p["url"],
+            f"{p['price']:.2f}",
+            "" if p["old_price"] is None else f"{p['old_price']:.2f}",
+            "" if p["change_pct"] is None else f"{p['change_pct']:.2f}",
+        ])
+
+    # the BOM makes excel read the file as utf-8
+    return Response(
+        "﻿" + out.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=prices-{date.today()}.csv"},
     )
 
 
