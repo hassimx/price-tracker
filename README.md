@@ -27,6 +27,8 @@ Activate the virtual environment.
 source .venv/bin/activate
 ```
 
+On Windows PowerShell you may see "running scripts is disabled on this system". You can skip the activation. Just start every command with `.venv\Scripts\python`, for example `.venv\Scripts\python -m pip install -r requirements.txt` and `.venv\Scripts\python scraper.py`.
+
 Install the packages, collect the prices and start the site.
 
 ```bash
