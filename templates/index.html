@@ -51,7 +51,7 @@
     <tbody>
       {% for p in products %}
       <tr class="{% if p.change_pct is not none %}{{ 'down' if p.change_pct < 0 else 'up' }}{% endif %}">
-        <td class="title" data-label="Title">{{ p.title }}</td>
+        <td class="title" data-label="Title"><a href="{{ url_for('product', product_id=p.id) }}">{{ p.title }}</a></td>
         <td class="num" data-label="Current price">{{ p.price|money }}</td>
         <td class="num" data-label="Previous price">{{ p.old_price|money }}</td>
         <td class="num change" data-label="Change">

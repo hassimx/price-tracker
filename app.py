@@ -1,6 +1,6 @@
 import math
 
-from flask import Flask, render_template, request, url_for
+from flask import Flask, abort, jsonify, render_template, request, url_for
 
 import db
 
@@ -65,6 +65,21 @@ def index():
         products=products, total=total, page=page, pages=pages, per_page=PER_PAGE,
         q=q, show=show, sort=sort, direction=direction, stats=db.get_stats(),
     )
+
+
+@app.route("/product/<int:product_id>")
+def product(product_id):
+    item = db.get_product(product_id)
+    if item is None:
+        abort(404)
+    return render_template("product.html", p=item)
+
+
+@app.route("/api/product/<int:product_id>/history")
+def product_history(product_id):
+    if db.get_product(product_id) is None:
+        abort(404)
+    return jsonify(db.get_history(product_id))
 
 
 if __name__ == "__main__":

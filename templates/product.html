@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}{{ p.title }} - Price Tracker{% endblock %}
+
+{% block content %}
+<a class="back-link" href="{{ url_for('index') }}">&larr; All products</a>
+<h1>{{ p.title }}</h1>
+<p class="source-link"><a href="{{ p.url }}" target="_blank" rel="noopener">View on books.toscrape.com</a></p>
+
+<section class="facts">
+  <div class="stat"><span class="stat-label">Current price</span><span class="stat-value">{{ p.price|money }}</span></div>
+  <div class="stat"><span class="stat-label">Previous price</span><span class="stat-value">{{ p.old_price|money }}</span></div>
+  <div class="stat">
+    <span class="stat-label">Change</span>
+    <span class="stat-value {% if p.change_pct is not none %}{{ 'down' if p.change_pct < 0 else 'up' }}{% endif %}">{{ p.change_pct|percent }}</span>
+  </div>
+  <div class="stat"><span class="stat-label">Lowest</span><span class="stat-value">{{ p.lowest|money }}</span></div>
+  <div class="stat"><span class="stat-label">Highest</span><span class="stat-value">{{ p.highest|money }}</span></div>
+</section>
+
+<section class="chart-card">
+  <h2>Price history</h2>
+  <div class="chart-box">
+    <canvas id="price-chart" data-src="{{ url_for('product_history', product_id=p.id) }}" aria-label="Line chart of the price over time" role="img"></canvas>
+  </div>
+  <p class="chart-note" id="chart-note">One point per day, the last price recorded that day.</p>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"
+        integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC"
+        crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='chart.js') }}"></script>
+{% endblock %}
