@@ -21,10 +21,10 @@
     return;
   }
 
-  PT.setupChartDefaults();
+  await PT.setupChartDefaults();
   document.title = p.title + " - Price Tracker";
   document.getElementById("title").textContent = p.title;
-  document.getElementById("source").innerHTML = `<a href="${PT.esc(p.url)}" target="_blank" rel="noopener">View on books.toscrape.com</a>`;
+  document.getElementById("source").innerHTML = `<a href="${PT.esc(p.url)}" target="_blank" rel="noopener">View this book on books.toscrape.com</a>`;
   document.getElementById("demo-note").hidden = !data.demo;
 
   const known = p.prices.filter((v) => v != null);
@@ -38,21 +38,24 @@
   buttons.push(`<button type="button" data-range="all" aria-pressed="true">All</button>`);
 
   content.innerHTML =
-    `<dl class="ledger">` +
-    `<div><dt>Current price</dt><dd>${PT.money(p.price)}</dd></div>` +
-    `<div><dt>Previous price</dt><dd>${PT.money(p.old)}</dd></div>` +
-    `<div><dt>Change</dt><dd>${PT.chip(p)}</dd></div>` +
-    `<div><dt>Lowest</dt><dd>${PT.money(lowest)}</dd></div>` +
-    `<div><dt>Highest</dt><dd>${PT.money(highest)}</dd></div>` +
-    `</dl>` +
-    `<section class="panel">` +
+    `<div class="product">` +
+    `<table class="facts"><tbody>` +
+    `<tr><th>Price</th><td>${PT.money(p.price)}</td></tr>` +
+    `<tr><th>Before</th><td>${PT.money(p.old)}</td></tr>` +
+    `<tr><th>Change</th><td>${PT.chip(p)}</td></tr>` +
+    `<tr><th>Lowest</th><td>${PT.money(lowest)}</td></tr>` +
+    `<tr><th>Highest</th><td>${PT.money(highest)}</td></tr>` +
+    `<tr><th>Average</th><td>${PT.money(average)}</td></tr>` +
+    `</tbody></table>` +
+    `<section>` +
     `<div class="chart-head"><div><h2>Price history</h2>` +
-    `<p class="sub">One point per day. The big dots are the lowest and highest price in view.</p></div>` +
-    (days.length > 7 ? `<div class="seg" id="range-seg" role="group" aria-label="Time range">${buttons.join("")}</div>` : "") +
+    `<p class="note">One point per day. Green dot: lowest price, red dot: highest.</p></div>` +
+    (days.length > 7 ? `<div class="tabs" id="range-seg" role="group" aria-label="Time range">${buttons.join("")}</div>` : "") +
     `</div>` +
     `<div class="chart-box tall"><canvas id="price-chart" role="img" aria-label="Line chart of the price over time"></canvas></div>` +
     `<p class="chart-note" id="chart-note"></p>` +
-    `</section>`;
+    `</section>` +
+    `</div>`;
 
   if (known.length < 2 || days.length < 2) {
     document.getElementById("chart-note").textContent = "Only one price recorded so far. Run the scraper again later, or load the demo data.";
@@ -91,7 +94,7 @@
           data: first.values,
           borderColor: PT.cssVar("--series"),
           backgroundColor: PT.cssVar("--series"),
-          borderWidth: 2.5,
+          borderWidth: 2,
           stepped: true, // a price stays the same until it changes
           pointRadius: look.radius,
           pointBackgroundColor: look.color,
@@ -117,7 +120,7 @@
         y: { grid: { color: PT.cssVar("--line") }, ticks: { callback: (value) => "£" + value.toFixed(2) } },
       },
       plugins: {
-        legend: { position: "bottom", labels: { usePointStyle: true, boxWidth: 8 } },
+        legend: { position: "bottom", labels: { usePointStyle: true, boxWidth: 10, boxHeight: 10 } },
         tooltip: {
           callbacks: {
             title: (items) => PT.longDate(shown.days[items[0].dataIndex]),
